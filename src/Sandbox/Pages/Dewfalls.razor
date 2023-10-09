@@ -1,0 +1,228 @@
+﻿@page "/Dewfalls"
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.DropDowns
+@using BuinessLogic
+@using System.Collections.ObjectModel;
+@using System.Diagnostics.CodeAnalysis;
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+<PageTitle>Bin Roater</PageTitle>
+<div style ="text-align: center">
+   <h3>This week it's:</h3>
+    <h1>@Turn</h1>
+    <h4>@Bins</h4>
+    
+</div>
+<br />
+<div id="ControlRegion">
+    <div id="listbox-control" style="text-align: center">
+        <h4>
+            <SfButton IconCss="e-icons e-edit-icon" IconPosition="IconPosition.Right" CssClass="e-flat" OnClick=OnEditClicked></SfButton>
+            Housemates:
+        </h4>
+        <SfListBox title="List of Housemates" DataSource="@Housemates" TValue="string[]" TItem="Housemate" AllowDragAndDrop="@IsEditable" @bind-Value=@Value @onmouseover=OnDrop @ref="_listBox">
+            <ListBoxFieldSettings Text="Name" Value="ID"></ListBoxFieldSettings>
+            <ListBoxTemplates TItem="Housemate">
+                <ItemTemplate>
+                    <div class="list-wrapper">
+                        <span class="text" >@((context as Housemate).Name)</span>
+                        <div class="description"> @((context as Housemate).Emoji) | @(DateOnly.FromDateTime((context as Housemate).DOB).ToString())
+                            <SfButton IconCss="e-icons e-edit-icon" CssClass="e-flat" OnClick=OnEditItemClicked hidden="@(!IsEditable)" ></SfButton>
+                        </div>
+                    </div>
+                </ItemTemplate>
+            </ListBoxTemplates>
+        </SfListBox>
+    </div>
+</div>
+<br />
+
+<SfDialog @ref="_dialogBox" ShowCloseIcon="true" Visible="false" Width="300px" Height="500px">
+    <DialogTemplates>
+        <Header>
+            <span>Edit Housemate Details</span>
+        </Header>
+        <Content> 
+                <SfTextBox ID="inVal" Type="InputType.Text" Placeholder="Name" @bind-Value =@SelectedHousemate.Name/>
+                <SfDatePicker TValue="DateOnly?" Placeholder='Choose a Date' ></SfDatePicker>
+                <EmojiInput ShowClearBtn = "false"
+                            ShowFilePicker ="false"
+                            ShowSubmit = "false"
+                            Placeholder="Emoji"
+                            AddonPrepend="🤔"
+                            @bind-Message=@SelectedHousemate.Emoji></EmojiInput>
+        </Content>
+        <FooterTemplate>
+                <button id="sendButton"  class="e-control e-btn e-primary" data-ripple="true">Save</button>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+<style>
+
+    br{
+
+        display: block; /* makes it have a width */
+        content: ""; /* clears default height */
+        margin-top:100px; /* change this to whatever height you want it */
+
+
+    }
+
+    .description{
+        display:none;
+        flex:none;
+    }
+    
+    .e-edit-icon::before {
+        content: '\e730';
+    }
+    .e-pause-icon::before {
+        content: '\e326';
+    }
+
+    .ulstyle {
+        margin: 0px;
+        padding-left: 20px;
+        display: inline-block;
+    }
+    .list {
+    float: left;
+    line-height: 20px;
+    margin: 50px;
+    min-width: 200px;
+    }  
+    #listbox-control {
+        width: 350px;
+        margin: auto;
+    }
+    @@media screen and (max-width: 590px) {
+        #listbox-control {
+            width: 100%;
+        }
+    }        
+
+    .e-template-listbox .e-list-item {
+        line-height: 1.5 !important;
+        padding: 50px !important;
+    }
+
+    .list-wrapper {
+        height: inherit;
+        position: relative;
+    }
+
+    .e-listbox-container .e-list-item {
+        height: auto !important;
+    }
+
+    .list-wrapper .text,
+    .list-wrapper .description {
+        display: block;
+        margin: 0;
+        padding-bottom: 3px;
+        white-space: normal;
+    }
+
+    .list-wrapper .description {
+        font-size: 15px;
+        font-weight: 500;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        color: darkslategray;
+    }
+
+    .e-listbox-container .list-wrapper .text {
+        font-weight: bold;
+        font-size: 20px;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        color: darkslategray;
+    }
+
+    .list-wrapper .e-avatar {
+        position: absolute;
+        left: 5px;
+        background-color: transparent;
+        font-size: 22px;
+        top: calc(50% - 35px);
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        color: darkslategray;
+    }
+
+    .bootstrap4 .list-wrapper .e-avatar {
+        top: calc(50% - 28px);
+    }
+
+
+</style>
+@code{
+    public Housemate SelectedHousemate { get; set; } = new("1","default",DateTime.Now,"");
+    public bool IsEditable = false;
+    public int Offset = 2;
+    public string Turn = "";
+    public string Bins { get { return BinRoaterCalculator.GetWhichBins(false); } }
+
+    public ObservableCollection<Housemate> Housemates = new();
+    public string[] Value = { "List of Housemates" };
+
+    [AllowNull]
+    private SfListBox<string[], Housemate> _listBox = null!;
+    [AllowNull]
+    private SfDialog _dialogBox = new();
+    private Database _database = new("housemates.txt");
+    private readonly string _scope = "list";
+
+    public Dewfalls()
+    {
+        LoadHousemates();
+        Turn = Housemates.GetTurn(Offset).Name;
+    }
+
+    public void LoadHousemates()
+    {
+        Housemates = new(_database.GetHouseMates());
+    }
+
+    public void OnDrop()
+    {
+        UpdateList();        
+    }
+
+    private void OnSelect()
+    {
+        var items = _listBox.GetDataByValue(Value);
+        if (items.FirstOrDefault() != null)
+        {
+            SelectedHousemate = items.First();
+            this.StateHasChanged();
+        }
+    }
+
+    private void UpdateList()
+    {
+        ReorderList();
+        _database.Save(Housemates);
+        Turn = Housemates.GetTurn(Offset).Name;
+    }
+
+    private void ReorderList()
+    {
+        Housemates = new ObservableCollection<Housemate>(_listBox.GetDataList());
+    }
+
+    private void OnEditClicked()
+
+    {
+
+        IsEditable = !IsEditable;
+    }
+
+    private async void OnEditItemClicked()
+    {
+        OnSelect();
+        await _dialogBox.ShowAsync();
+    }
+
+    private void DialogClosed(object sender) { }
+}
+
