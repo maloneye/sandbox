@@ -1,46 +1,37 @@
 ﻿@inherits LayoutComponentBase
 @inject IJSRuntime JS
 @using Syncfusion.Blazor.Navigations
-<PageTitle>Sandbox</PageTitle>
 <SfSidebar ID="Sidebar" Type="SidebarType.Push" Width="300px" DockSize="65px" EnableDock="true" @ref="Sidebar" @bind-IsOpen="SidebarToggle">
-    <div class="sidebar" style="position:fixed;z-index:1200;background-image:none;background-color:#17222b;">
+    <div class="sidebar" style="position:fixed;z-index:1200">
         <div class="topnav navbar navbar-dark">
             <button class="navbar-toggler" @onclick="ToggleNavMenu" />
             <a class="navbar-brand" href=""><span class="displayText" style="margin-right:30px">Sandbox</span></a>
         </div>
         <div @onmouseover="MouseIn" @onmouseout="MouseOut">
-            <NavMenu/>
+            <NavMenu />
         </div>
     </div>
 </SfSidebar>
-
 <div class="main">
-@*   <div class="top-row px-4" style="z-index:1111;padding-top:0px">
+   <div class="top-row px-4" style="z-index:1111;padding-top:0px">
         <a href="https://www.syncfusion.com/blazor-components/" target="_blank">Blazor Components</a>
         <a href="https://blazor.syncfusion.com/documentation/" target="_blank">User Guide</a>
         <a href="http://blazor.syncfusion.com/" target="_blank">View Demos</a>
-    </div>*@
+    </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
 <style>
-    .navbar-brand {
-        color: antiquewhite;
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    }
-
-        body {
-        background-color:antiquewhite;
-        font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-        color: darkslategray;
-
-    }
     .sidebar {
         width: 300px;
         min-width: 300px;
     }
+	
+	.e-filemanager .e-fe-popup.e-dialog.e-popup.e-dlg-resizable {
+    z-index: 1202 !important;
+	}
 
     .navbar-toggler {
         display: inline-block;
@@ -49,10 +40,10 @@
         height: 24px;
         margin-left: 30px;
         background-image: url('images/ToggleButton.png');
-        background-color: goldenrod;
+        background-color: #05163C;
         transform: scale(0.75);
         transform-origin: left;
-        color: goldenrod;
+        color: #ffffff;
     }
 
 
@@ -192,11 +183,7 @@
 
 @code
 {
-#if NETCOREAPP3_1 || NETSTANDARD2_1
-    SfSidebar Sidebar; 
-#else
-    SfSidebar? Sidebar; 
-#endif
+	SfSidebar? Sidebar;
 	public bool SidebarToggle = false; 
 	public bool SidebarToggleFixed = false; 
 	public void ToggleNavMenu() 
