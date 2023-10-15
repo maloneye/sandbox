@@ -1,4 +1,5 @@
-﻿using BuinessLogic;
+﻿using BlazorSpinner;
+using BuinessLogic;
 using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddScoped<SpinnerService>();
 builder.Services.AddSingleton<IDatabase, MySQLDatabase>();
 var app = builder.Build();
 //Register Syncfusion license https://help.syncfusion.com/common/essential-studio/licensing/how-to-generate

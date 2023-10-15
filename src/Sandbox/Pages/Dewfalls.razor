@@ -13,6 +13,7 @@
 @using Syncfusion.Blazor.Notifications;
 
 @inject IDatabase _database;
+@inject BlazorSpinner.SpinnerService _spinnerService
 
 <PageTitle>Dewfalls</PageTitle>
 <div style ="text-align: center">
@@ -72,7 +73,6 @@
 
 </div>
 
-<h1>DB pings this session: @counter</h1>
 
 <SfToast ID="toast_default" @ref="ToastObj" Title="List Updated!:" Content="@ToastContent" Timeout="5000" Icon="e-meeting">
         <ToastPosition X="@ToastPosition"></ToastPosition>
@@ -262,9 +262,10 @@
 
     protected async override void OnInitialized()
     {
+        _spinnerService.Show();
         _database.ListUpdated += LoadHousemates;
         await LoadHousemates();
-
+        _spinnerService.Hide();
 
     }
 
