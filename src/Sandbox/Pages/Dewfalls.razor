@@ -10,6 +10,7 @@
 @using Syncfusion.Blazor.Popups
 @using MyEmoji;
 @using EmojiOne;
+@using Syncfusion.Blazor.Notifications;
 
 @inject IDatabase _database;
 
@@ -68,7 +69,11 @@
 
 </div>
 
-<h1>count: @counter</h1>
+<h1>DB pings this session: @counter</h1>
+
+<SfToast ID="toast_default" @ref="ToastObj" Title="Database Notificaiton:" Content="@ToastContent" Timeout="5000" Icon="e-meeting">
+        <ToastPosition X="@ToastPosition"></ToastPosition>
+    </SfToast>
 
 <style>
     .editRegion
@@ -226,7 +231,9 @@
     public string Turn = "";
     public string Bins { get { return BinRoaterCalculator.GetWhichBins(false); } }
     public AutoResetEvent locket = new(false);
-
+    SfToast ToastObj;
+    private string ToastPosition = "Right";
+    private string ToastContent => $"Sent to database! at: {DateTime.Now.ToString("HH:mm:ss")}";
     public int counter { get; set; }
 
     private ObservableCollection<Housemate> _housemates = new();
@@ -289,7 +296,7 @@
                 Housemates.Insert(i, DialogChanges);
                 Housemates.RemoveAt(i);
                 _database.Save(_housemates);
-                
+
                 break;
             }
         }
@@ -329,6 +336,8 @@
             Housemates.Add(mate);
         }
         _database.Save(Housemates);
+        
+        this.ToastObj.ShowAsync();
         Turn = Housemates.GetTurn(Offset).Name;
     }
 
