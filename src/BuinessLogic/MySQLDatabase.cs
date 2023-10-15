@@ -45,14 +45,14 @@ namespace BuinessLogic
                     var dob = (DateTime)reader["DOB"];
                     var emoji = (string)reader["Emoji"];
 
-                    housemates.Add(new Housemate(id.ToString(), name, dob, emoji));
+                    housemates.Add(new Housemate(id, name, dob, emoji));
                 }
             }
 
             _connection.Close();
 
 
-            return housemates;
+            return housemates.OrderBy(h => h.ID);
         }
 
         public async void Save(IEnumerable<Housemate> housemates)
@@ -76,12 +76,13 @@ namespace BuinessLogic
                     command.Parameters.AddWithValue("@ID", count);
                     command.Parameters.AddWithValue("@Name", housemate.Name);
                     command.Parameters.AddWithValue("@DOB", housemate.DOB);
-                    command.Parameters.AddWithValue("@Emoji", count++.ToString());
+                    command.Parameters.AddWithValue("@Emoji", housemate.Emoji);
 
                     // Execute the SQL command
                     await command.ExecuteNonQueryAsync();
 
                     command.Parameters.Clear();
+                    count++;
 
                 }
             }

@@ -2,7 +2,7 @@
 {
     public class Housemate
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
 
         public string Name { get; set; }
 
@@ -15,17 +15,19 @@
 
         }
 
-        public Housemate(string iD, string name, DateTime dOB, string emoji)
+        public Housemate(int iD, string name, DateTime dOB, string emoji)
         {
             ID = iD;
             Name = name;
             DOB = dOB;
             Emoji = emoji;
+
         }
 
         public override string ToString()
         {
-            return "Housemate: " + Name;
+            return "Housemate: " + Name + " | " + Emoji.ToImage();
         }
+
     }
 }

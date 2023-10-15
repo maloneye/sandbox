@@ -7,6 +7,8 @@
   </PropertyGroup>
   
    <ItemGroup>
+         <PackageReference Include="bootstrap" Version="5.3.2" />
+         <PackageReference Include="Markdig" Version="0.33.0" />
          <PackageReference Include="Syncfusion.Blazor.Calendars" Version="23.1.40" />
     <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="23.1.40" />
     <PackageReference Include="Syncfusion.Blazor.Navigations" Version="23.1.40" />
