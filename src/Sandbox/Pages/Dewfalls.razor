@@ -36,11 +36,11 @@
                 <SfButton IconCss="e-icons e-edit-icon" IconPosition="IconPosition.Right" CssClass="e-flat" OnClick=OnEditClicked></SfButton>
             </div>
         </div>
-        <SfListBox title="List of Housemates" DataSource="@Housemates" TValue="string[]" TItem="Housemate" AllowDragAndDrop="@IsEditable" @bind-Value=@Value @onmouseover=UpdateList @onmouseup=OnSelect @ref="_listBox">
+            <SfListBox title="List of Housemates" DataSource="@Housemates" TValue="string[]" TItem="Housemate" AllowDragAndDrop="@IsEditable" @bind-Value=@Value @onmouseup=OnSelect @ref="_listBox">
             <ListBoxFieldSettings Text="Name" Value="ID"></ListBoxFieldSettings>
-            <ListBoxTemplates TItem="Housemate">
+                                <ListBoxTemplates TItem="Housemate" >
                 <ItemTemplate>
-                    <div class="list-wrapper">
+                        <div class="list-wrapper" >
                         <span class="text" >@((context as Housemate).Name)</span>
                         <div class="mygrid">
                             <div></div>
@@ -54,6 +54,9 @@
                     </div>
                 </ItemTemplate>
             </ListBoxTemplates>
+
+                <ListBoxEvents TValue="string[]" TItem="Housemate" OnDrop="updateItems"> </ListBoxEvents>
+
         </SfListBox>
 
     </div>
@@ -71,7 +74,7 @@
 
 <h1>DB pings this session: @counter</h1>
 
-<SfToast ID="toast_default" @ref="ToastObj" Title="Database Notificaiton:" Content="@ToastContent" Timeout="5000" Icon="e-meeting">
+<SfToast ID="toast_default" @ref="ToastObj" Title="List Updated!:" Content="@ToastContent" Timeout="5000" Icon="e-meeting">
         <ToastPosition X="@ToastPosition"></ToastPosition>
     </SfToast>
 
@@ -277,6 +280,11 @@
         counter++;
         this.InvokeAsync(this.StateHasChanged);
     }
+    public async void updateItems(DropEventArgs<Housemate> args)
+    {
+        await Task.Delay(5);
+        UpdateList();
+    }
 
     public async Task LoadHousemates()
     {
@@ -294,7 +302,7 @@
             if (Housemates[i].ID == DialogChanges.ID)
             {
                 Housemates.Insert(i, DialogChanges);
-                Housemates.RemoveAt(i);
+                Housemates.RemoveAt(i+1);
                 _database.Save(_housemates);
 
                 break;
@@ -336,8 +344,8 @@
             Housemates.Add(mate);
         }
         _database.Save(Housemates);
-        
         this.ToastObj.ShowAsync();
+        
         Turn = Housemates.GetTurn(Offset).Name;
     }
 

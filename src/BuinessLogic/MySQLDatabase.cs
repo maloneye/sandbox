@@ -96,7 +96,7 @@ namespace BuinessLogic
         }
 
 
-        public void Save(IEnumerable<Housemate> housemates)
+        public async void Save(IEnumerable<Housemate> housemates)
         {
 
             _semaphore.Wait();
@@ -120,7 +120,7 @@ namespace BuinessLogic
                         command.Parameters.AddWithValue("@Emoji", housemate.Emoji);
 
                         // Execute the SQL command
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
 
                         command.Parameters.Clear();
                         count++;
@@ -131,6 +131,7 @@ namespace BuinessLogic
             finally
             {
                 _semaphore.Release();
+                await GetHousemates();
             }
             
 
