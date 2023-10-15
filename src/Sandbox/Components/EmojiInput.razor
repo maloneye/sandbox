@@ -69,7 +69,7 @@
 
 
     <div class="input-group-append popover__wrapper" style="@StyleEmojiBtnContainer">
-        <button class="btn btn-outline-secondary" style="@StyleEmojiBtn" type="button" id="button-emojipicker">@SmileyBtnIcon</button>
+        <button class="btn btn-outline-secondary" style="@StyleEmojiBtn" type="button" disabled="@Enabled" id="button-emojipicker">@SmileyBtnIcon</button>
         <div class="popover__content" style="@StyleEmojiPopoverContainer">
             <EmojiPanelContainer AddEmoji="@AddEmoji" ClassEmojiTabBtnActive="@ClassEmojiTabBtnActive" ClassEmojiTabBtnInActive="@ClassEmojiTabBtnInActive"
                                  EmojiList="@AllEmojies" />
@@ -106,7 +106,7 @@
     [Parameter] public string StyleBtnClear { get; set; } = "";
     [Parameter] public string StyleBtnSubmitContainer { get; set; } = "";
     [Parameter] public string StyleBtnSubmit { get; set; } = "";
-
+    [Parameter] public bool Enabled { get; set; } = true;
 
     /// <summary>Enable message preview. Useful for HTML/Markdown preview.</summary>
     [Parameter] public bool ShowPreview { get; set; } = true;

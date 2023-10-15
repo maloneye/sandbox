@@ -1,11 +1,13 @@
 ﻿@page "/"
+@using System.Collections.ObjectModel;
+@inject IDatabase _database;
 
 <PageTitle>Index</PageTitle>
 <br />
 <p class="pagecontent">INDEX</p>
 <div class="controlregion">
 
-
+    <h1>@(Housemates)</h1>
 </div>
 <style>
     .ulstyle {
@@ -68,11 +70,23 @@ margin-top: 10px;
 
 @code
 {
-    public Index()
+    public int Housemates { get; set; } = new();
+
+    protected async override void OnInitialized()
     {
-        var db = new MySQLDatabase();
-        db.GetHouseMates();
+        _database.ListUpdated += LoadHousemates;
+
+
     }
 
-           
+    private void LoadHousemates(object? sender, IEnumerable<Housemate> list)
+    {
+        if (list.Count() > 5)
+        {
+            Housemates++;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+       
 }

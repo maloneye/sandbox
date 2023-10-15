@@ -22,13 +22,20 @@
     
 </div>
 <br />
+<div class="mainListGrid">
+    <div/>
+    <div />
+
 <div id="ControlRegion">
     <div id="listbox-control" style="text-align: center">
-        <h4>
-            <SfButton IconCss="e-icons e-edit-icon" IconPosition="IconPosition.Right" CssClass="e-flat" OnClick=OnEditClicked></SfButton>
-            Housemates:
-        </h4>
-        <SfListBox title="List of Housemates" DataSource="@Housemates" TValue="string[]" TItem="Housemate" AllowDragAndDrop="@IsEditable" @bind-Value=@Value @onmouseover=OnDrop @ref="_listBox">
+        <div class="headerGrid">
+            <div/>
+            <h2>Rota:</h2>
+            <div>
+                <SfButton IconCss="e-icons e-edit-icon" IconPosition="IconPosition.Right" CssClass="e-flat" OnClick=OnEditClicked></SfButton>
+            </div>
+        </div>
+        <SfListBox title="List of Housemates" DataSource="@Housemates" TValue="string[]" TItem="Housemate" AllowDragAndDrop="@IsEditable" @bind-Value=@Value @onmouseover=UpdateList @onmouseup=OnSelect @ref="_listBox">
             <ListBoxFieldSettings Text="Name" Value="ID"></ListBoxFieldSettings>
             <ListBoxTemplates TItem="Housemate">
                 <ItemTemplate>
@@ -39,7 +46,7 @@
                             <div class="description"> @((context as Housemate).Emoji.ToImage()) | @(DateOnly.FromDateTime((context as Housemate).DOB).ToString("dd-MM"))
                             </div>
                             <div class="button">
-                                <SfButton IconCss="e-icons e-edit-icon" CssClass="e-flat" OnClick=OnEditItemClicked hidden="@(!IsEditable)" @onmouseover=MouseOverItem></SfButton>
+                                @*<SfButton IconCss="e-icons e-edit-icon" CssClass="e-flat" OnClick=OnEditItemClicked hidden="@(!IsEditable)" @onmouseover=MouseOverItem></SfButton>*@
                             </div>
                         </div>
 
@@ -50,27 +57,43 @@
 
     </div>
 </div>
-<br />
+<div class="editRegion" hidden="@(!IsEditable)">
+            <span class="span1">Edit details:</span>
+            <SfTextBox ID="inVal" Type="InputType.Text" Placeholder="Name" @bind-Value="@DialogChanges.Name" Enabled="@(DialogChanges.Name!="default")" />
+            <SfDatePicker TValue="DateTime" Placeholder='Choose a Date' Max="MaxDate" Min="MinDate" @bind-Value="@DialogChanges.DOB" Enabled="@(DialogChanges.Name!="default")"></SfDatePicker>
+            <EmojiInput @bind-Message="@(DialogEmoji)" Enabled="@(DialogChanges.Name=="default")" />
+            <button id="saveButton"  class="e-control e-btn e-primary" data-ripple="true" @onclick=OnSave disabled="@(DialogChanges.Name=="default")">Save</button>
 
+</div>
 
-<SfDialog @ref="_dialogBox" ShowCloseIcon="true" Visible="false" Width="500px" Height="700px" Target="#target">
-    <DialogTemplates>
-        <Header>
-            <span>Edit Housemate Details</span>
-        </Header>
-        <Content> 
-            <SfTextBox ID="inVal" Type="InputType.Text" Placeholder="Name" @bind-Value="@DialogChanges.Name"/>
-            <SfDatePicker TValue="DateTime" Placeholder='Choose a Date' Max="MaxDate" Min="MinDate" @bind-Value="@DialogChanges.DOB"></SfDatePicker>
-            <EmojiInput @bind-Message="@(DialogEmoji)"/>
-        </Content>
-        <FooterTemplate>
-                <button id="saveButton"  class="e-control e-btn e-primary" data-ripple="true" @onclick=OnSave>Save</button>
-        </FooterTemplate>
-    </DialogTemplates>
-    <DialogPositionData X="center" Y="center"></DialogPositionData>
-</SfDialog>
+</div>
+
+<h1>count: @counter</h1>
 
 <style>
+    .editRegion
+    {
+        align-items:baseline;
+        min-width:200px;
+    }
+
+    .span1
+    {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        color: darkslategray;
+    }
+
+    .mainListGrid
+    {
+        display: grid;
+        grid-template-columns: 1fr 1fr 2fr 1fr 1fr ;
+    }
+    .headerGrid
+    {
+        display:grid;
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+
     .mygrid
     {
         display:Grid;
@@ -92,7 +115,7 @@
 
         display: block; /* makes it have a width */
         content: ""; /* clears default height */
-        margin-top:150px; /* change this to whatever height you want it */
+        margin-top:100px; /* change this to whatever height you want it */
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
         color: darkslategray;
 
@@ -135,17 +158,18 @@
     .list {
     float: left;
     line-height: 20px;
-    margin: 50px;
-    min-width: 200px;
+    margin: 20px;
+    min-width: 10px;
     }  
     #listbox-control {
-        width: 350px;
+        width: 250px;
+        min-width:150px;
         margin: auto;
     }   
 
     .e-template-listbox .e-list-item {
         line-height: 1.5 !important;
-        padding: 50px !important;
+        padding: 0px !important;
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
         color: darkslategray;
     }
@@ -175,7 +199,7 @@
         height:20px;
         font-size: 15px;
         font-weight: 500;
-        padding:25px;
+        padding:0px;
     }
 
     .e-listbox-container .list-wrapper .text {
@@ -185,15 +209,7 @@
         color: darkslategray;
     }
 
-    .list-wrapper .e-avatar {
-        position: absolute;
-        left: 5px;
-        background-color: transparent;
-        font-size: 22px;
-        top: calc(50% - 35px);
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-        color: darkslategray;
-    }
+
 
     .bootstrap4 .list-wrapper .e-avatar {
         top: calc(50% - 28px);
@@ -209,6 +225,9 @@
     public int Offset = 2;
     public string Turn = "";
     public string Bins { get { return BinRoaterCalculator.GetWhichBins(false); } }
+    public AutoResetEvent locket = new(false);
+
+    public int counter { get; set; }
 
     private ObservableCollection<Housemate> _housemates = new();
 
@@ -216,13 +235,12 @@
     {
         get { return _housemates; }
         set 
-        { 
+        {
             _housemates = value;
-            _database.Save(_housemates);
         }
     }
-    
-    public string[] Value = { "List of Housemates" };
+
+    public string[] Value { get; set; } = { "List of Housemates" };
 
     [AllowNull]
     private SfListBox<string[], Housemate> _listBox = null!;
@@ -232,29 +250,31 @@
     public DateTime MinDate {get;set;} = new DateTime(1980,01,01);
     public DateTime MaxDate {get;set;} = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 27);
 
-    protected override void OnInitialized()
+    protected async override void OnInitialized()
     {
-        LoadHousemates();
+        _database.ListUpdated += LoadHousemates;
+        await LoadHousemates();
+
+
+    }
+
+    private void LoadHousemates(object? sender, IEnumerable<Housemate> list)
+    {
+        Housemates.Clear();
+        var observableList = new ObservableCollection<Housemate>();
+        foreach (var mate in list)
+        {
+            Housemates.Add(mate);
+        }
+
+        counter++;
+        this.InvokeAsync(this.StateHasChanged);
+    }
+
+    public async Task LoadHousemates()
+    {
+        await _database.GetHousemates();
         Turn = Housemates.GetTurn(Offset).Name;
-    }
-
-    public void LoadHousemates()
-    {
-        Housemates = new(_database.GetHouseMates());
-    }
-
-    public void OnDrop()
-    {
-        UpdateList();        
-    }
-
-    public void SendToDB()
-    {
-        _database.Save(Housemates);
-    }
-
-    private void MouseOverItem(MouseEventArgs args)
-    {
     }
 
     private void OnSave()
@@ -266,14 +286,20 @@
         {
             if (Housemates[i].ID == DialogChanges.ID)
             {
-
-                Housemates[i]= DialogChanges;
+                Housemates.Insert(i, DialogChanges);
+                Housemates.RemoveAt(i);
+                _database.Save(_housemates);
+                
+                break;
             }
         }
+
+
     }
 
-    private void OnSelect()
+    private async void OnSelect()
     {
+        await Task.Delay(100);
         var items = _listBox.GetDataByValue(Value);
         if (items.FirstOrDefault() != null)
         {
@@ -286,32 +312,50 @@
                     Emoji = SelectedHousemate.Emoji
             };
 
+            DialogEmoji = DialogChanges.Emoji.ToImage();
+            UpdateList();
             this.StateHasChanged();
         }
     }
 
     private void UpdateList()
     {
-        ReorderList();
+        var newList = new List<Housemate>(_listBox.GetDataList());
+        if (CheckAreSame(newList,Housemates)) return;
+
+        Housemates.Clear();
+        foreach (var mate in newList)
+        {
+            Housemates.Add(mate);
+        }
+        _database.Save(Housemates);
         Turn = Housemates.GetTurn(Offset).Name;
     }
 
-    private void ReorderList()
+    private bool CheckAreSame(List<Housemate> newList, ObservableCollection<Housemate> oldList)
     {
-        Housemates = new ObservableCollection<Housemate>(_listBox.GetDataList());
+        bool check =false;
+        for (int i = 0; i < newList.Count; i++)
+        {
+            check = newList[i].ID == oldList[i].ID &&
+            newList[i].Name == oldList[i].Name &&
+            newList[i].DOB == oldList[i].DOB &&
+            newList[i].Emoji == oldList[i].Emoji;
+            if (!check) break;
+        }
+        return check;
+
     }
 
-    private void OnEditClicked()
+    private void OnEditClicked(MouseEventArgs e)
     {
         IsEditable = !IsEditable;
     }
 
-    private async void OnEditItemClicked()
+    private void OnEditItemClicked()
     {
         OnSelect();
-        await _dialogBox.ShowAsync();
     }
 
-    private void DialogClosed(object sender) { }
 }
 
