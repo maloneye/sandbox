@@ -13,8 +13,7 @@ using (StreamReader reader = new(@"private/private.json"))
 }
 
 WebsiteSettings webSettings = JsonConvert.DeserializeObject<WebsiteSettings>(settings)!;
-var database = new MySQLDatabase();
-database.Initalise(webSettings);
+var database = new MySQLDatabase(webSettings.ConnectionString);
 
 // Add services to the container.
 builder.Services.AddSyncfusionBlazor();

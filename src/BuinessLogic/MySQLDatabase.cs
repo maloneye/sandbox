@@ -12,15 +12,18 @@ namespace BuinessLogic
 
         private SemaphoreSlim _semaphore = new(1);
         private CancellationTokenSource TokenSource = new();
+        private readonly string _connectionString;
 
-        public MySQLDatabase()
+        public MySQLDatabase(string connectionString)
         {
 
+            _connectionString = connectionString;
+            Task.Run(Initalise).Wait();
         }
 
-        public async void Initalise(IWebSettings connectionSettings)
+        public async void Initalise()
         {
-            _connection = new MySqlConnection(connectionSettings.ConnectionString);
+            _connection = new MySqlConnection(_connectionString);
             _connection.Open();
 
             await PeriodicQuery();

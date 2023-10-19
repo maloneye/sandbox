@@ -1,7 +1,9 @@
 {
-  "SfKey": "Ngo9BigBOggjHTQxAR8/V1NHaF5cWWNCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWH9fcnVcRWdZU0d/XkA=",
-  "HOST": "sql8.freesqldatabase.com",
-  "USER": "sql8653133",
-  "DATABASE": "sql8653133",
-  "PASSWORD": "kp5mhEhU8Z"
+
+  "SfKey": "Ngo9BigBOggjHTQxAR8/V1NHaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWH9feXVQRGReUEN0X0E=",
+  "Host": "sql8.freesqldatabase.com",
+  "Database": "sql8653133",
+  "User": "sql8653133",
+  "Password": "kp5mhEhU8Z"
+
 }

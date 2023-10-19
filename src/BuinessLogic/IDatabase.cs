@@ -2,7 +2,7 @@
 {
     public interface IDatabase
     {
-        public void Initalise(IWebSettings connectionSettings);
+        public void Initalise();
         public Task<IEnumerable<Housemate>> GetHousemates();
         public void Save(IEnumerable<Housemate> housemates);
         public event EventHandler<IEnumerable<Housemate>> ListUpdated;

@@ -59,4 +59,4 @@ C:\dev\repos\Sandbox\src\Sandbox\bin\Debug\net7.0\Microsoft.AspNetCore.Metadata.
 C:\dev\repos\Sandbox\src\Sandbox\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
 C:\dev\repos\Sandbox\src\Sandbox\bin\Debug\net7.0\Microsoft.JSInterop.dll
 C:\dev\repos\Sandbox\src\Sandbox\bin\Debug\net7.0\Newtonsoft.Json.dll
-C:\dev\repos\Sandbox\src\Sandbox\bin\Debug\net7.0\private\private.json
+C:\dev\repos\sandbox\src\Sandbox\bin\Debug\net7.0\private\private.json

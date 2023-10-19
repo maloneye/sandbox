@@ -58,3 +58,5 @@ C:\dev\repos\Sandbox\src\Sandbox\bin\Release\net7.0\Microsoft.AspNetCore.Compone
 C:\dev\repos\Sandbox\src\Sandbox\bin\Release\net7.0\Microsoft.AspNetCore.Metadata.dll
 C:\dev\repos\Sandbox\src\Sandbox\bin\Release\net7.0\Microsoft.Extensions.Options.dll
 C:\dev\repos\Sandbox\src\Sandbox\bin\Release\net7.0\Microsoft.JSInterop.dll
+C:\dev\repos\sandbox\src\Sandbox\bin\Release\net7.0\Newtonsoft.Json.dll
+C:\dev\repos\sandbox\src\Sandbox\bin\Release\net7.0\private\private.json

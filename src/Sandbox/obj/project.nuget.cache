@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "sYEvoDDqhpEOcN9h+3ZoOOuphpkuPWlh0EI4R7iTlsgmKmzDFIETLfcyuHFUsO4BCkDsqBNEZqjGFT1hxpbobg==",
+  "dgSpecHash": "JNB6XL/GdNLp+xarbge7MsDq5TtXera1k9Py51MpgbF/Jsi/BCRROY2Z4Hswf2jfXIjqWgleJuSdGK1QxrtdFA==",
   "success": true,
-  "projectFilePath": "C:\\dev\\repos\\Sandbox\\src\\Sandbox\\Sandbox.csproj",
+  "projectFilePath": "C:\\dev\\repos\\sandbox\\src\\Sandbox\\Sandbox.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ewan\\.nuget\\packages\\blazorspinner\\1.4.2\\blazorspinner.1.4.2.nupkg.sha512",
     "C:\\Users\\Ewan\\.nuget\\packages\\bootstrap\\5.3.2\\bootstrap.5.3.2.nupkg.sha512",

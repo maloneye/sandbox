@@ -7,6 +7,8 @@
         public string User { get; }
         public string Password { get; }
         public string SfKey { get; }
+        
+        public string ConnectionString => $"Server={Host}; Database={Database}; Uid={User}; Pwd={Password};";
 
         public WebsiteSettings(string host,string database,string user,string password,string sfKey) 
         {
@@ -16,6 +18,8 @@
             Password = password;
             SfKey = sfKey;
         }
+
+
 
     }
 }

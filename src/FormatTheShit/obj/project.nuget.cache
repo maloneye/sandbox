@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qj8EdIH7dm8y/sW+/Y3qqmo7mQyEB4RMj4sVvsWj0DBFOUWiQ7LG02qRcEyFII0bQzp5cYMIOoxEk7H6W9nvzw==",
+  "dgSpecHash": "qzinvCFSujdS1aAlQLfSVTKg3Na04NSCnCpjDCbwmyYuvQdhaaU/bN/L94Jx+b8onTUbQVHpJRlg5AdfRjm/jw==",
   "success": true,
-  "projectFilePath": "C:\\dev\\repos\\Sandbox\\src\\FormatTheShit\\FormatTheShit.csproj",
+  "projectFilePath": "C:\\dev\\repos\\sandbox\\src\\FormatTheShit\\FormatTheShit.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ewan\\.nuget\\packages\\emojione\\4.5.0\\emojione.4.5.0.nupkg.sha512",
     "C:\\Users\\Ewan\\.nuget\\packages\\microsoft.aspnetcore.authorization\\7.0.0\\microsoft.aspnetcore.authorization.7.0.0.nupkg.sha512",
