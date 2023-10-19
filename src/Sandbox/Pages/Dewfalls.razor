@@ -265,6 +265,7 @@
         _spinnerService.Show();
         _database.ListUpdated += LoadHousemates;
         await LoadHousemates();
+        
         _spinnerService.Hide();
 
     }
@@ -291,6 +292,8 @@
     {
         await _database.GetHousemates();
         Turn = Housemates.GetTurn(Offset).Name;
+        await this.InvokeAsync(this.StateHasChanged);
+
     }
 
     private void OnSave()

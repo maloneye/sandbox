@@ -1,18 +1,31 @@
 ﻿using BlazorSpinner;
 using BuinessLogic;
 using Syncfusion.Blazor;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string settings;
+using (StreamReader reader = new("private.json"))
+{ 
+    settings = reader.ReadToEnd();
+}
+
+WebsiteSettings webSettings = JsonConvert.DeserializeObject<WebsiteSettings>(settings)!;
+var database = new MySQLDatabase();
+database.Initalise(webSettings);
 
 // Add services to the container.
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<SpinnerService>();
-builder.Services.AddSingleton<IDatabase, MySQLDatabase>();
+builder.Services.AddSingleton<IDatabase>(database);
+
 var app = builder.Build();
-//Register Syncfusion license https://help.syncfusion.com/common/essential-studio/licensing/how-to-generate
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF5cWWNCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWH9fcnVcRWdZU0d/XkA=");
+
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(webSettings.SfKey);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -5,18 +5,9 @@ namespace BuinessLogic
 {
     public class MySQLDatabase : IDatabase, IDisposable
     {
-        
+        private MySqlConnection? _connection;
+        public IEnumerable<Housemate>? _housemates;
 
-        private const string HOST = "sql8.freesqldatabase.com";
-        private const string USER = "sql8653133";
-        private const string DATABASE = "sql8653133";
-        private const string PASSWORD = "kp5mhEhU8Z";
-
-        private string _connectionString = $"Server={HOST}; Database={DATABASE}; Uid={USER}; Pwd={PASSWORD};";
-
-        private MySqlConnection _connection;
-        public IEnumerable<Housemate> _housemates;
-        
         public event EventHandler<IEnumerable<Housemate>> ListUpdated;
 
         private SemaphoreSlim _semaphore = new(1);
@@ -24,19 +15,20 @@ namespace BuinessLogic
 
         public MySQLDatabase()
         {
-            _connection = new MySqlConnection(_connectionString);
-            Initalise();
+
         }
 
-        public async void Initalise()
+        public async void Initalise(IWebSettings connectionSettings)
         {
+            _connection = new MySqlConnection(connectionSettings.ConnectionString);
             _connection.Open();
+
             await PeriodicQuery();
         }
 
         private void OnUpdateRecived(IEnumerable<Housemate> e)
         {
-          ListUpdated?.Invoke(this, e);
+            ListUpdated?.Invoke(this, e);
         }
 
         private async Task PeriodicQuery()
@@ -133,7 +125,7 @@ namespace BuinessLogic
                 _semaphore.Release();
                 await GetHousemates();
             }
-            
+
 
         }
 
