@@ -1,0 +1,12 @@
+C:\dev\repos\Sandbox\src\BuinessLogic\bin\Release\net7.0\BuinessLogic.deps.json
+C:\dev\repos\Sandbox\src\BuinessLogic\bin\Release\net7.0\BuinessLogic.dll
+C:\dev\repos\Sandbox\src\BuinessLogic\bin\Release\net7.0\BuinessLogic.pdb
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\BuinessLogic.csproj.AssemblyReference.cache
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\BuinessLogic.GeneratedMSBuildEditorConfig.editorconfig
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\BuinessLogic.AssemblyInfoInputs.cache
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\BuinessLogic.AssemblyInfo.cs
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\BuinessLogic.csproj.CoreCompileInputs.cache
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\BuinessLogic.dll
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\refint\BuinessLogic.dll
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\BuinessLogic.pdb
+C:\dev\repos\Sandbox\src\BuinessLogic\obj\Release\net7.0\ref\BuinessLogic.dll

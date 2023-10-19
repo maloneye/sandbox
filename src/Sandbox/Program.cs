@@ -7,7 +7,7 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 string settings;
-using (StreamReader reader = new("private.json"))
+using (StreamReader reader = new(@"private/private.json"))
 { 
     settings = reader.ReadToEnd();
 }
