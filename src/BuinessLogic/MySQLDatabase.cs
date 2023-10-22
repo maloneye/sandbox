@@ -5,7 +5,7 @@ namespace BuinessLogic
 {
     public class MySQLDatabase : IDatabase, IDisposable
     {
-        private MySqlConnection? _connection;
+        private MySqlConnection _connection;
         public IEnumerable<Housemate>? _housemates;
 
         public event EventHandler<IEnumerable<Housemate>> ListUpdated;
@@ -16,17 +16,26 @@ namespace BuinessLogic
 
         public MySQLDatabase(string connectionString)
         {
-
             _connectionString = connectionString;
+            _connection = new MySqlConnection(_connectionString);
             Task.Run(Initalise).Wait();
         }
 
+        public MySQLDatabase(IWebSettings settings) : this(settings.ConnectionString) { }
+
         public async void Initalise()
         {
-            _connection = new MySqlConnection(_connectionString);
-            _connection.Open();
+            _semaphore.Wait();
+            try
+            {
+                _connection.Open();
 
-            await PeriodicQuery();
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+                await PeriodicQuery();
         }
 
         private void OnUpdateRecived(IEnumerable<Housemate> e)
@@ -38,7 +47,7 @@ namespace BuinessLogic
         {
             while (!TokenSource.IsCancellationRequested)
             {
-                await Task.Delay(new TimeSpan(0, 0, 30));
+                await Task.Delay(new TimeSpan(0, 0, 10));
                 await GetHousemates();
             }
         }
@@ -50,7 +59,7 @@ namespace BuinessLogic
             {
                 List<Housemate> housemates = new();
 
-                var query = "SELECT * FROM `Housemates`";
+                var query = "SELECT * FROM `housemates`";
                 var command = new MySqlCommand(query, _connection);
 
                 using (MySqlDataReader reader = await command.ExecuteReaderAsync())

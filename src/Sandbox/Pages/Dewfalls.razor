@@ -18,7 +18,7 @@
 <PageTitle>Dewfalls</PageTitle>
 <div style ="text-align: center">
    <h3>This week it's:</h3>
-    <h1>@Turn</h1>
+    <h1>@Turn.Name</h1>
     <h4>@Bins</h4>
     
     
@@ -39,41 +39,43 @@
         </div>
             <SfListBox title="List of Housemates" DataSource="@Housemates" TValue="string[]" TItem="Housemate" AllowDragAndDrop="@IsEditable" @bind-Value=@Value @onmouseup=OnSelect @ref="_listBox">
             <ListBoxFieldSettings Text="Name" Value="ID"></ListBoxFieldSettings>
-                                <ListBoxTemplates TItem="Housemate" >
-                <ItemTemplate>
-                        <div class="list-wrapper" >
-                        <span class="text" >@((context as Housemate).Name)</span>
-                        <div class="mygrid">
-                            <div></div>
-                            <div class="description"> @((context as Housemate).Emoji.ToImage()) | @(DateOnly.FromDateTime((context as Housemate).DOB).ToString("dd-MM"))
-                            </div>
-                            <div class="button">
-                                @*<SfButton IconCss="e-icons e-edit-icon" CssClass="e-flat" OnClick=OnEditItemClicked hidden="@(!IsEditable)" @onmouseover=MouseOverItem></SfButton>*@
+                <ListBoxTemplates TItem="Housemate">
+                    <ItemTemplate>
+                            <div class="list-wrapper" >
+                            <span class="text" >@((context as Housemate).Name)</span>
+                            <div class="mygrid">
+                                <div>Turn: <b>@((context as Housemate).IdToTurnDate(Turn).ToString("dd-MMM"))</b></div>
+                                <div class="description"> @((context as Housemate).Emoji.ToImage()) | @(DateOnly.FromDateTime((context as Housemate).DOB).ToString("dd-MMM"))
+                                </div>
+                                <div class="button">
+                                    <SfButton IconCss="e-icons e-edit-icon" CssClass="e-flat" OnClick=OnEditItemClicked hidden="@(!IsEditable)"></SfButton>
+                                </div>
                             </div>
                         </div>
-
-                    </div>
-                </ItemTemplate>
-            </ListBoxTemplates>
-
-                <ListBoxEvents TValue="string[]" TItem="Housemate" OnDrop="updateItems"> </ListBoxEvents>
-
-        </SfListBox>
-
+                    </ItemTemplate>
+                </ListBoxTemplates>
+                    <ListBoxEvents TValue="string[]" TItem="Housemate" OnDrop="UpdateItems"> </ListBoxEvents>
+            </SfListBox>
+        </div>
     </div>
-</div>
-<div class="editRegion" hidden="@(!IsEditable)">
-            <span class="span1">Edit details:</span>
-            <SfTextBox ID="inVal" Type="InputType.Text" Placeholder="Name" @bind-Value="@DialogChanges.Name" Enabled="@(DialogChanges.Name!="default")" />
-            <SfDatePicker TValue="DateTime" Placeholder='Choose a Date' Max="MaxDate" Min="MinDate" @bind-Value="@DialogChanges.DOB" Enabled="@(DialogChanges.Name!="default")"></SfDatePicker>
-            <EmojiInput @bind-Message="@(DialogEmoji)" Enabled="@(DialogChanges.Name=="default")" />
-            <button id="saveButton"  class="e-control e-btn e-primary" data-ripple="true" @onclick=OnSave disabled="@(DialogChanges.Name=="default")">Save</button>
+
+    <SfDialog IsModal="true" @bind-Visible="@Editing" ShowCloseIcon="true">
+        <DialogTemplates>
+
+        <Header>Edit details</Header>
+        <Content>
+                <SfTextBox ID="inVal" Type="InputType.Text" Placeholder="Name" @bind-Value="@DialogChanges.Name" Enabled="@(DialogChanges.Name!="default")" />
+                <SfDatePicker TValue="DateTime" Placeholder='Choose a Date' Max="MaxDate" Min="MinDate" @bind-Value="@DialogChanges.DOB" Enabled="@(DialogChanges.Name!="default")"></SfDatePicker>
+                <EmojiInput @bind-Message="@(DialogEmoji)" Enabled="@(DialogChanges.Name=="default")" />
+        </Content>
+        </DialogTemplates>
+         <DialogButtons>
+            <DialogButton Content="Save" IsPrimary="true" OnClick="OnSave" disabled="@(DialogChanges.Name=="default")" />
+        </DialogButtons>
+
+    </SfDialog>
 
 </div>
-
-</div>
-
-
 <SfToast ID="toast_default" @ref="ToastObj" Title="List Updated!:" Content="@ToastContent" Timeout="1000" Icon="e-meeting">
         <ToastPosition X="@ToastPosition"></ToastPosition>
     </SfToast>
@@ -117,6 +119,8 @@
 
     .mygrid
     {
+        text-align:center;
+        vertical-align:central;
         display:Grid;
         grid-template-columns: 1fr 2fr 1fr;
 
@@ -240,14 +244,17 @@
 </style>
 @code{
     public string DialogEmoji { get; set; } = "";
-    public Housemate SelectedHousemate { get; set; } = new(1, "default", DateTime.Now, "");
+    public Housemate SelectedHousemate { get; set; }
     public Housemate DialogChanges { get; set; } = new(1,"default",DateTime.Now,"");
+
     public bool IsEditable = false;
+    public bool Editing = false;
+
     public int Offset = 2;
-    public string Turn = "";
+    public Housemate Turn = new(1, "default", DateTime.Now, "");
     public string Bins { get { return BinRoaterCalculator.GetWhichBins(false); } }
     public AutoResetEvent locket = new(false);
-    SfToast ToastObj;
+    SfToast? ToastObj;
     private string ToastPosition = "Right";
     private string ToastContent => $"Sent to database! at: {DateTime.Now.ToString("HH:mm:ss")}";
     public int counter { get; set; }
@@ -277,13 +284,13 @@
     {
         _spinnerService.Show();
         _database.ListUpdated += LoadHousemates;
-        await LoadHousemates();
-        
+        await _database.GetHousemates();
+        SelectedHousemate = Housemates.FirstOrDefault();
+        await this.InvokeAsync(this.StateHasChanged);
         _spinnerService.Hide();
-
     }
 
-    private void LoadHousemates(object? sender, IEnumerable<Housemate> list)
+    private async void LoadHousemates(object? sender, IEnumerable<Housemate> list)
     {
         Housemates.Clear();
         var observableList = new ObservableCollection<Housemate>();
@@ -291,23 +298,14 @@
         {
             Housemates.Add(mate);
         }
-
-        counter++;
-        this.InvokeAsync(this.StateHasChanged);
+        Turn = Housemates.GetTurn(Offset);
     }
-    public async void updateItems(DropEventArgs<Housemate> args)
+    public async void UpdateItems(DropEventArgs<Housemate> args)
     {
         await Task.Delay(5);
         UpdateList();
     }
 
-    public async Task LoadHousemates()
-    {
-        await _database.GetHousemates();
-        Turn = Housemates.GetTurn(Offset).Name;
-        await this.InvokeAsync(this.StateHasChanged);
-
-    }
 
     private void OnSave()
     {
@@ -346,7 +344,7 @@
 
             DialogEmoji = DialogChanges.Emoji.ToImage();
             UpdateList();
-            this.StateHasChanged();
+            
         }
     }
 
@@ -360,10 +358,11 @@
         {
             Housemates.Add(mate);
         }
+        Turn = Housemates.GetTurn(Offset);
+        this.StateHasChanged();
         _database.Save(Housemates);
-        this.ToastObj.ShowAsync();
-        
-        Turn = Housemates.GetTurn(Offset).Name;
+        this.ToastObj!.ShowAsync();
+
     }
 
     private bool CheckAreSame(List<Housemate> newList, ObservableCollection<Housemate> oldList)
@@ -389,6 +388,7 @@
     private void OnEditItemClicked()
     {
         OnSelect();
+        Editing = !Editing;
     }
 
 }
