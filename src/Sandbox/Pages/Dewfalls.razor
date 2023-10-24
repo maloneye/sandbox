@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <SfDialog IsModal="true" @bind-Visible="@Editing" ShowCloseIcon="true">
+    <SfDialog IsModal="true" @bind-Visible="@IsEditingItem" ShowCloseIcon="true">
         <DialogTemplates>
 
         <Header>Edit details</Header>
@@ -244,20 +244,19 @@
 </style>
 @code{
     public string DialogEmoji { get; set; } = "";
-    public Housemate SelectedHousemate { get; set; }
+    public Housemate? SelectedHousemate { get; set; }
     public Housemate DialogChanges { get; set; } = new(1,"default",DateTime.Now,"");
 
     public bool IsEditable = false;
-    public bool Editing = false;
+    public bool IsEditingItem = false;
 
     public int Offset = 2;
     public Housemate Turn = new(1, "default", DateTime.Now, "");
     public string Bins { get { return BinRoaterCalculator.GetWhichBins(false); } }
-    public AutoResetEvent locket = new(false);
+
     SfToast? ToastObj;
     private string ToastPosition = "Right";
     private string ToastContent => $"Sent to database! at: {DateTime.Now.ToString("HH:mm:ss")}";
-    public int counter { get; set; }
 
     private ObservableCollection<Housemate> _housemates = new();
 
@@ -290,7 +289,7 @@
         _spinnerService.Hide();
     }
 
-    private async void LoadHousemates(object? sender, IEnumerable<Housemate> list)
+    private void LoadHousemates(object? sender, IEnumerable<Housemate> list)
     {
         Housemates.Clear();
         var observableList = new ObservableCollection<Housemate>();
@@ -299,6 +298,8 @@
             Housemates.Add(mate);
         }
         Turn = Housemates.GetTurn(Offset);
+        
+        
     }
     public async void UpdateItems(DropEventArgs<Housemate> args)
     {
@@ -351,7 +352,7 @@
     private void UpdateList()
     {
         var newList = new List<Housemate>(_listBox.GetDataList());
-        if (CheckAreSame(newList,Housemates)) return;
+        if (AssertAreSame(newList,Housemates)) return;
 
         Housemates.Clear();
         foreach (var mate in newList)
@@ -365,7 +366,7 @@
 
     }
 
-    private bool CheckAreSame(List<Housemate> newList, ObservableCollection<Housemate> oldList)
+    private bool AssertAreSame(List<Housemate> newList, ObservableCollection<Housemate> oldList)
     {
         bool check =false;
         for (int i = 0; i < newList.Count; i++)
@@ -388,7 +389,7 @@
     private void OnEditItemClicked()
     {
         OnSelect();
-        Editing = !Editing;
+        IsEditingItem = !IsEditingItem;
     }
 
 }
