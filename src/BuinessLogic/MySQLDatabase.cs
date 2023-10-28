@@ -29,7 +29,6 @@ namespace BuinessLogic
             try
             {
                 _connection.Open();
-
             }
             finally
             {
@@ -64,14 +63,15 @@ namespace BuinessLogic
 
                 using (MySqlDataReader reader = await command.ExecuteReaderAsync())
                 {
+                    var order = 0;
                     while (await reader.ReadAsync())
                     {
                         var id = (int)reader["ID"];
                         var name = (string)reader["Name"];
                         var dob = (DateTime)reader["DOB"];
                         var emoji = (string)reader["Emoji"];
-
-                        housemates.Add(new Housemate(id, name, dob, emoji));
+                        
+                        housemates.Add(new Housemate(id, name, dob, emoji,order++));
                     }
                 }
                 var orderedList = housemates.OrderBy(h => h.ID);
@@ -125,10 +125,8 @@ namespace BuinessLogic
 
                         // Execute the SQL command
                         await command.ExecuteNonQueryAsync();
-
-                        command.Parameters.Clear();
                         count++;
-
+                        command.Parameters.Clear();
                     }
                 }
             }

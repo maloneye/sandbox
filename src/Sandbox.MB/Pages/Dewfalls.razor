@@ -1,0 +1,110 @@
+﻿@page "/dewfalls"
+
+@using BuinessLogic
+@using System.Collections.ObjectModel;
+@using MudBlazor.Utilities;
+@using System.Diagnostics;
+
+@inject ISnackbar _snackbar;
+@inject IDatabase _database;
+<PageTitle>Dewfalls</PageTitle>
+
+
+<MudContainer Class="mx-auto">
+    <ChildContent>
+        <MudText Typo="Typo.h6" Align="Align.Center">This week it's:</MudText>
+        <MudText Typo="Typo.h3" Align="Align.Center">@Turn.Name</MudText>
+        <MudText Typo="Typo.h5" Align="Align.Center">@Bins</MudText>
+    </ChildContent>
+</MudContainer>
+
+<MudContainer Width="100%">
+    <MudText Align="Align.Right" Class="d-inline">Edit:</MudText>
+    <MudIconButton Class="d-inline" Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="CanEdit"></MudIconButton>
+    <MudDropContainer T="Housemate" Items="Housemates" ItemsSelector="@((item, dropzone) => true)" ItemDropped="ItemDropped" MinWidth="MinWidth.Small">
+
+    <ChildContent>
+        <MudDropZone T="Housemate" Identifier="1" AllowReorder="IsEditable" Class="rounded mud-background-gray px-4 py-1 ma-7">
+            <MudText Typo="Typo.h6" Class="mb-4">Rota</MudText>
+         </MudDropZone>
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Elevation="25" Class="pa-2 my-2">
+        <MudGrid Spacing="0">
+            <MudItem>
+                    <MudText  Typo="Typo.body2" Class="d-inline">Turn: @context.IdToTurnDate(Turn).ToString("dd-MMM")</MudText>
+            </MudItem>
+                    <MudSpacer />
+            <MudItem >
+                        <MudText Class="d-inline-flex">@context.Name</MudText>
+            </MudItem>
+                    <MudSpacer/>
+            <MudItem >
+                        <MudText Typo="Typo.body2" Class="d-inline">@context.DOB.ToString("dd-MMM")</MudText>
+            </MudItem >
+            <MudSpacer/>
+            <MudItem >
+                    <MudText Align="Align.Center" Class="d-inline-flex">@context.Emoji.ToImage()</MudText>
+            </MudItem>
+            <MudSpacer/>
+            <MudItem>
+                <MudHidden IsHidden=@(!IsEditable)>
+                    <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="@(() =>Selected(context))" Disabled="@(!IsEditable)" />
+                </MudHidden>
+            </MudItem>
+        </MudGrid>
+        </MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
+</MudContainer>
+            <MudOverlay Visible="IsBusy" DarkBackground="true" Absolute="true">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            </MudOverlay>
+
+@code {
+    public List<Housemate> Housemates = new();
+
+    public Housemate Turn = new(1, "default", DateTime.Now, "",-1);
+    public string Bins { get { return BinRoaterCalculator.GetWhichBins(false); } }
+    public int Offset = 2;
+
+    public DateTime MinDate { get; set; } = new DateTime(1980, 01, 01);
+    public DateTime MaxDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 27);
+
+    public bool IsBusy { get; set; } = true;
+    public bool IsEditable { get; set; } = false;
+
+    protected async override void OnInitialized()
+    {
+        _database.ListUpdated += LoadHousemates;
+        await _database.GetHousemates();
+    }
+
+    protected override void OnAfterRender(bool firstRender) => InvokeAsync(StateHasChanged);
+
+    private void LoadHousemates(object? sender, IEnumerable<Housemate> list)
+    {
+        IsBusy = true;
+        Housemates = list.OrderBy(x => x.Order).ToList();
+        Turn = Housemates.GetTurn(Offset);
+        IsBusy = false;
+    }
+
+    private void CanEdit() => IsEditable = !IsEditable;
+
+    private void ItemDropped(MudItemDropInfo<Housemate> dropItem)
+    {
+        IsBusy = true;
+        var workingList = Housemates;
+        workingList.UpdateOrder(dropItem, item => item.Order, 0);
+        var orderd = workingList.OrderBy(x => x.Order).ToList();
+        _database.Save(orderd);
+        _snackbar.Add($"{dropItem.Item.Name} was moved to position {dropItem.Item.Order} at: {DateTime.Now.ToString("hh:mm:ss tt")}",Severity.Success);
+        IsBusy = false;
+    }
+
+    private void Selected(Housemate housemate)
+    {
+        _snackbar.Add($"you clicked on {housemate.Name}");
+    }
+}

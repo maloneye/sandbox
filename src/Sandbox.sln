@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "Sandbox\Sandbox.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuinessLogic", "BuinessLogic\BuinessLogic.csproj", "{0105D9D3-2ADD-44F3-B425-4657477339FF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox.MB", "Sandbox.MB\Sandbox.MB.csproj", "{B3DA672E-67E3-4E69-B745-E8E7F3236ED2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0105D9D3-2ADD-44F3-B425-4657477339FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0105D9D3-2ADD-44F3-B425-4657477339FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0105D9D3-2ADD-44F3-B425-4657477339FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3DA672E-67E3-4E69-B745-E8E7F3236ED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3DA672E-67E3-4E69-B745-E8E7F3236ED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3DA672E-67E3-4E69-B745-E8E7F3236ED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3DA672E-67E3-4E69-B745-E8E7F3236ED2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
