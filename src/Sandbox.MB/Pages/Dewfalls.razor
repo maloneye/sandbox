@@ -10,8 +10,6 @@
 @inject IDatabase _database;
 <PageTitle>Dewfalls</PageTitle>
 
-
-
 <MudContainer Class="mx-auto">
     <ChildContent>
         <MudText Typo="Typo.h6" Align="Align.Center">This week it's:</MudText>
@@ -23,39 +21,16 @@
 <MudContainer Width="100%">
     <MudText Align="Align.Right" Class="d-inline">Edit:</MudText>
     <MudIconButton Class="d-inline" Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="CanEdit"></MudIconButton>
-
     <MudDropContainer T="Housemate" Items="Housemates" ItemsSelector="@((item, dropzone) => true)" ItemDropped="ItemDropped" MinWidth="MinWidth.Small">
     <ChildContent>
         <MudDropZone T="Housemate" Identifier="1" AllowReorder="IsEditable" Class="rounded mud-background-gray px-4 py-1 ma-7">
             <MudText Typo="Typo.h6" Class="mb-4">Rota</MudText>
-                <HousematesEditor IsOpen="true" SelectedHousemate="@SelectedHousemate" />
+                <HousematesEditor IsOpen="@IsOpen" SelectedHousemate="@SelectedHousemate" />
          </MudDropZone>
     </ChildContent>
     <ItemRenderer>
         <MudPaper Elevation="25" Class="pa-2 my-2">
-        <MudGrid Spacing="0">
-            <MudItem>
-                    <MudText  Typo="Typo.body2" Class="d-inline">Turn: @context.IdToTurnDate(Turn).ToString("dd-MMM")</MudText>
-            </MudItem>
-                    <MudSpacer />
-            <MudItem >
-                        <MudText Class="d-inline-flex">@context.Name</MudText>
-            </MudItem>
-                    <MudSpacer/>
-            <MudItem >
-                        <MudText Typo="Typo.body2" Class="d-inline">@(((DateTime)context.DOB!).ToString("dd-MMM"))</MudText>
-            </MudItem >
-            <MudSpacer/>
-            <MudItem >
-                    <MudText Align="Align.Center" Class="d-inline-flex">@context.Emoji.ToImage()</MudText>
-            </MudItem>
-            <MudSpacer/>
-            <MudItem>
-                <MudHidden IsHidden=@(!IsEditable)>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="@(() =>Selected(context))" Disabled="@(!IsEditable)" />
-                </MudHidden>
-            </MudItem>
-        </MudGrid>
+        <HousmateViewer Item="context" Turn="@Turn"></HousmateViewer>
         </MudPaper>
     </ItemRenderer>
 </MudDropContainer>
@@ -65,22 +40,6 @@
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             </MudOverlay>*@
 
-
-<MudPopover Open="@IsOpen" Fixed="true" Class="px-4 pt-4 relative z-20" AnchorOrigin="Origin.CenterCenter">
-    <div class="d-flex flex-column">
-        <MudTextField @bind-Value="SelectedHousemate.Name" Label="Name" Variant="Variant.Text"></MudTextField>
-            <MudDatePicker Label="DOB" @bind-Date="date" />
-        <MudTextField @bind-Value="emoji" Label="Emoji" Variant="Variant.Text"></MudTextField>
-            <MudButton OnClick="@SaveEdit" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Save</MudButton>
-
-        <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
-            <MudPopover Open="IsOpen" AnchorOrigin="Origin.CenterCenter" Class="absolute z-100">
-                <MudText>Something here</MudText>
-            </MudPopover>
-    </div>
-</MudPopover>
-
-    <EmojiPicker></EmojiPicker>
 
     @code {
     public List<Housemate> Housemates = new();
@@ -155,7 +114,8 @@
             if (Housemates[i].ID == SelectedHousemate.ID)
             {
                 Housemates[i] = SelectedHousemate;    
-            }
+
+            }
         }        
 
 

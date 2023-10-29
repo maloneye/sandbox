@@ -1,5 +1,5 @@
 ﻿
-<MudContainer Class="center-screen" open="@IsOpen" >
+<MudOverlay Class="center-screen" IsHidden="true">
     <MudPaper   Class="rounded mud-background-gray px-4 py-5 ma-7 object-center " Elevation="100">
         <MudTextField @bind-Value="SelectedHousemate.Name" Label="Name" Variant="Variant.Text"></MudTextField>
         <MudDatePicker Label="DOB" @bind-Date="_date" />
@@ -7,7 +7,7 @@
         <MudButton OnClick="@SaveEdit" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Save</MudButton>
         <MudButton OnClick="@(()=>IsOpen =false)" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
     </MudPaper>
-</MudContainer>
+</MudOverlay>
 
 <style>
     .center-screen {

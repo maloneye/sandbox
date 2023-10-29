@@ -1,15 +1,47 @@
 ﻿@inherits ComponentBase
 
-<MudDataGrid Items="@(Items)">
+<div class="wrapper">
+    <MudText Typo="Typo.body2" Class="turn">Turn: @("\n"+Item.IdToTurnDate(Turn).ToString("dd-MMM"))</MudText>
+    <MudText Class="name">@Item.Name</MudText>
+    <MudText Typo="Typo.body2" Class="dob">@(((DateTime)Item.DOB!).ToString("dd-MMM"))</MudText>
+    <MudText Align="Align.Center" Class="emoji">@Item.Emoji.ToImage()</MudText>
+</div>
+
+<style>
+    .wrapper 
+    {
+        display: grid;
+        grid-template-columns: repeat(4, 0.5fr);
+    }
+
+    .turn
+    {
+        grid-column:1;
+        width:50px;
+    }
+
+        .name {
+            grid-column: 2;
+            width: 50px;
+        }
+
+        .dob {
+            grid-column: 3;
+            width: 50px;
+        }
+
+        .emoji {
+            grid-column: 4;
+            width: 5px;
+        }
 
 
-</MudDataGrid>
-
-@code {
+</style>
+    @code {
     Guid id = Guid.NewGuid();
-    private List<Housemate> Items = new();
     [Parameter] public Housemate Item { get; set; }
     [Parameter] public bool IsEditable {get;set;} = false;
+    [Parameter] public Housemate Turn { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
