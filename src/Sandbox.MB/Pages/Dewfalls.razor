@@ -1,5 +1,6 @@
 ﻿@page "/dewfalls"
 
+@using Sandbox.MB.Components;
 @using BuinessLogic
 @using System.Collections.ObjectModel;
 @using MudBlazor.Utilities;
@@ -8,6 +9,7 @@
 @inject ISnackbar _snackbar;
 @inject IDatabase _database;
 <PageTitle>Dewfalls</PageTitle>
+
 
 
 <MudContainer Class="mx-auto">
@@ -21,11 +23,12 @@
 <MudContainer Width="100%">
     <MudText Align="Align.Right" Class="d-inline">Edit:</MudText>
     <MudIconButton Class="d-inline" Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="CanEdit"></MudIconButton>
-    <MudDropContainer T="Housemate" Items="Housemates" ItemsSelector="@((item, dropzone) => true)" ItemDropped="ItemDropped" MinWidth="MinWidth.Small">
 
+    <MudDropContainer T="Housemate" Items="Housemates" ItemsSelector="@((item, dropzone) => true)" ItemDropped="ItemDropped" MinWidth="MinWidth.Small">
     <ChildContent>
         <MudDropZone T="Housemate" Identifier="1" AllowReorder="IsEditable" Class="rounded mud-background-gray px-4 py-1 ma-7">
             <MudText Typo="Typo.h6" Class="mb-4">Rota</MudText>
+                <HousematesEditor IsOpen="true" SelectedHousemate="@SelectedHousemate" />
          </MudDropZone>
     </ChildContent>
     <ItemRenderer>
@@ -40,7 +43,7 @@
             </MudItem>
                     <MudSpacer/>
             <MudItem >
-                        <MudText Typo="Typo.body2" Class="d-inline">@context.DOB.ToString("dd-MMM")</MudText>
+                        <MudText Typo="Typo.body2" Class="d-inline">@(((DateTime)context.DOB!).ToString("dd-MMM"))</MudText>
             </MudItem >
             <MudSpacer/>
             <MudItem >
@@ -57,12 +60,33 @@
     </ItemRenderer>
 </MudDropContainer>
 </MudContainer>
-            <MudOverlay Visible="IsBusy" DarkBackground="true" Absolute="true">
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-            </MudOverlay>
 
-@code {
+@*            <MudOverlay Visible="IsBusy" DarkBackground="true" Absolute="true">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            </MudOverlay>*@
+
+
+<MudPopover Open="@IsOpen" Fixed="true" Class="px-4 pt-4 relative z-20" AnchorOrigin="Origin.CenterCenter">
+    <div class="d-flex flex-column">
+        <MudTextField @bind-Value="SelectedHousemate.Name" Label="Name" Variant="Variant.Text"></MudTextField>
+            <MudDatePicker Label="DOB" @bind-Date="date" />
+        <MudTextField @bind-Value="emoji" Label="Emoji" Variant="Variant.Text"></MudTextField>
+            <MudButton OnClick="@SaveEdit" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Save</MudButton>
+
+        <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
+            <MudPopover Open="IsOpen" AnchorOrigin="Origin.CenterCenter" Class="absolute z-100">
+                <MudText>Something here</MudText>
+            </MudPopover>
+    </div>
+</MudPopover>
+
+    <EmojiPicker></EmojiPicker>
+
+    @code {
     public List<Housemate> Housemates = new();
+    public Housemate SelectedHousemate { get; set; } = new(1, "default", DateTime.Now, "", -1);
+    private DateTime? date { get; set; }
+    private string emoji ="";
 
     public Housemate Turn = new(1, "default", DateTime.Now, "",-1);
     public string Bins { get { return BinRoaterCalculator.GetWhichBins(false); } }
@@ -73,6 +97,7 @@
 
     public bool IsBusy { get; set; } = true;
     public bool IsEditable { get; set; } = false;
+    public bool IsOpen { get; set; } = false;
 
     protected async override void OnInitialized()
     {
@@ -105,6 +130,43 @@
 
     private void Selected(Housemate housemate)
     {
-        _snackbar.Add($"you clicked on {housemate.Name}");
+        housemate.Emoji = housemate.Emoji.ToImage();
+        SelectedHousemate = housemate;
+
+        date = SelectedHousemate.DOB;
+        emoji = SelectedHousemate.Emoji;
+        IsOpen = true;
     }
+
+    private void SaveEdit()
+    {
+        Console.Clear();
+        if (date is not null)
+        {
+            SelectedHousemate.DOB = date;
+            Console.WriteLine(((DateTime)date).ToString("dd-MMM-yyyy"));
+        }
+        SelectedHousemate.Emoji = emoji.ToShort();
+        Console.WriteLine(emoji);
+        //        Housemates.Where(x => x.ID == SelectedHousemate.ID).Select(x => SelectedHousemate);
+
+        for (int i = 0; i < Housemates.Count; i++)
+        {
+            if (Housemates[i].ID == SelectedHousemate.ID)
+            {
+                Housemates[i] = SelectedHousemate;    
+            }
+        }        
+
+
+        _database.Save(Housemates);
+        _snackbar.Add($"{SelectedHousemate.Name} was updated at: {DateTime.Now.ToString("hh:mm:ss tt")}", Severity.Success);
+
+        IsOpen = false;
+
+    }
+
+
+    public void ToggleOpen() => IsOpen = !IsOpen;
+    
 }

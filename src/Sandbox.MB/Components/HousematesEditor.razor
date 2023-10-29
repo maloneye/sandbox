@@ -1,0 +1,43 @@
+﻿
+<MudContainer Class="center-screen" open="@IsOpen" >
+    <MudPaper   Class="rounded mud-background-gray px-4 py-5 ma-7 object-center " Elevation="100">
+        <MudTextField @bind-Value="SelectedHousemate.Name" Label="Name" Variant="Variant.Text"></MudTextField>
+        <MudDatePicker Label="DOB" @bind-Date="_date" />
+        <EmojiPicker></EmojiPicker>
+        <MudButton OnClick="@SaveEdit" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Save</MudButton>
+        <MudButton OnClick="@(()=>IsOpen =false)" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
+    </MudPaper>
+</MudContainer>
+
+<style>
+    .center-screen {
+        width: 100px;
+        height: 75%;
+        padding-top: 20px;
+        padding-right: 10%;
+        padding-bottom: 50px;
+        padding-left: 10%;
+        position: relative;
+        justify-content: center;
+        z-index:inherit+50;
+    }
+</style>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; } = false;
+    [Parameter] public Housemate? SelectedHousemate {get;set;}
+
+    private DateTime? _date;
+    private string _name ="";
+    private string _emoji = "";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    public void SaveEdit()
+    {
+        
+    }
+}
