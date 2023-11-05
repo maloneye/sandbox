@@ -18,30 +18,41 @@
     </ChildContent>
 </MudContainer>
 
-<MudContainer Width="100%">
+<MudContainer MaxWidth="MaxWidth.Small" Class="align-center justify-center">
     <MudText Align="Align.Right" Class="d-inline">Edit:</MudText>
     <MudIconButton Class="d-inline" Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="CanEdit"></MudIconButton>
     <MudDropContainer T="Housemate" Items="Housemates" ItemsSelector="@((item, dropzone) => true)" ItemDropped="ItemDropped" MinWidth="MinWidth.Small">
-    <ChildContent>
-        <MudDropZone T="Housemate" Identifier="1" AllowReorder="IsEditable" Class="rounded mud-background-gray px-4 py-1 ma-7">
-            <MudText Typo="Typo.h6" Class="mb-4">Rota</MudText>
-                <HousematesEditor IsOpen="@IsOpen" SelectedHousemate="@SelectedHousemate" />
-         </MudDropZone>
+    <ChildContent>   
+            <MudDropZone T="Housemate" Identifier="1" AllowReorder="IsEditable" Class="rounded mud-background-gray px-4 py-1 ma-7">
+                <MudText Typo="Typo.h6" Class="mb-4">Rota</MudText>
+            </MudDropZone>
     </ChildContent>
     <ItemRenderer>
-        <MudPaper Elevation="25" Class="pa-2 my-2">
-        <HousmateViewer Item="context" Turn="@Turn"></HousmateViewer>
-        </MudPaper>
+            <HousmateViewer Item="context" 
+                Turn="@Turn" 
+                IsEditable="@IsEditable" 
+                EditItemClicked="@(() => Selected(context))" />
     </ItemRenderer>
 </MudDropContainer>
 </MudContainer>
 
+<MudOverlay Visible="IsOpen" DarkBackground="true">
+    <HousematesEditor SelectedHousemate="@SelectedHousemate" 
+                      CloseRequested="@(() => IsOpen = false)"
+                      SaveRequested="SaveEdit" />
+</MudOverlay>
+
+
+
 @*            <MudOverlay Visible="IsBusy" DarkBackground="true" Absolute="true">
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             </MudOverlay>*@
-
-
-    @code {
+<style>
+    .touch{
+        touch-action:none;
+    }
+</style>
+@code {
     public List<Housemate> Housemates = new();
     public Housemate SelectedHousemate { get; set; } = new(1, "default", DateTime.Now, "", -1);
     private DateTime? date { get; set; }
@@ -78,6 +89,7 @@
 
     private void ItemDropped(MudItemDropInfo<Housemate> dropItem)
     {
+        if (!IsEditable) return;
         IsBusy = true;
         var workingList = Housemates;
         workingList.UpdateOrder(dropItem, item => item.Order, 0);
@@ -102,10 +114,10 @@
         Console.Clear();
         if (date is not null)
         {
-            SelectedHousemate.DOB = date;
+            //SelectedHousemate.DOB = date;
             Console.WriteLine(((DateTime)date).ToString("dd-MMM-yyyy"));
         }
-        SelectedHousemate.Emoji = emoji.ToShort();
+        SelectedHousemate.Emoji = SelectedHousemate.Emoji.ToShort();
         Console.WriteLine(emoji);
         //        Housemates.Where(x => x.ID == SelectedHousemate.ID).Select(x => SelectedHousemate);
 

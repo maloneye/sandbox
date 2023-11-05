@@ -1,17 +1,24 @@
-﻿@inherits ComponentBase
+﻿@using MudBlazor.Utilities;
 
-<div class="wrapper">
-    <MudText Typo="Typo.body2" Class="turn">Turn: @("\n"+Item.IdToTurnDate(Turn).ToString("dd-MMM"))</MudText>
-    <MudText Class="name">@Item.Name</MudText>
-    <MudText Typo="Typo.body2" Class="dob">@(((DateTime)Item.DOB!).ToString("dd-MMM"))</MudText>
-    <MudText Align="Align.Center" Class="emoji">@Item.Emoji.ToImage()</MudText>
-</div>
+@inherits ComponentBase
+
+<MudPaper Elevation="25" Class="pa-2 my-2 wrapper" MaxWidth="280px" draggable="true">
+
+        <MudText Typo="Typo.body2" Class="turn">Turn: @("\n"+Item.IdToTurnDate(Turn).ToString("dd-MMM"))</MudText>
+        <MudText Class="name">@Item.Name</MudText>
+        <MudText Typo="Typo.body2" Class="dob">@(((DateTime)Item.DOB!).ToString("dd-MMM"))</MudText>
+        <MudText Align="Align.Center" Class="emoji">@Item.Emoji.ToImage()</MudText>
+            <MudIconButton Class="d-inline" Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="EditItemClicked" Disabled="@(!IsEditable)" />
+        @*OnClick="@(() => Selected(context))"*@
+
+</MudPaper>
 
 <style>
     .wrapper 
     {
+        position:sticky;
         display: grid;
-        grid-template-columns: repeat(4, 0.5fr);
+        grid-template-columns: repeat(5, 1fr);
     }
 
     .turn
@@ -22,17 +29,35 @@
 
         .name {
             grid-column: 2;
-            width: 50px;
+            width: 80px;
+            vertical-align: central;
+            text-align:center;
+            height:50px;
+            line-height: 50px;
         }
 
         .dob {
             grid-column: 3;
             width: 50px;
+            vertical-align: central;
+            text-align: center;
+            height: 50px;
+            line-height: 50px;
         }
 
         .emoji {
             grid-column: 4;
             width: 5px;
+            vertical-align: central;
+            text-align: center;
+            height: 50px;
+            line-height: 50px;
+        }
+
+        .editbutton {
+            grid-column: 5;
+            width: 5px;
+            vertical-align: central;
         }
 
 
@@ -42,6 +67,7 @@
     [Parameter] public Housemate Item { get; set; }
     [Parameter] public bool IsEditable {get;set;} = false;
     [Parameter] public Housemate Turn { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> EditItemClicked { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {

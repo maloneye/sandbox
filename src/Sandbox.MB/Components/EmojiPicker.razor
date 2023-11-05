@@ -1,12 +1,45 @@
-﻿<MudPaper Class=".center-screen z-100">
+﻿@using MyEmoji;
+<MudPaper Class=".center-screen z-100">
 
 <MudButton OnClick="@(()=>IsOpen = !IsOpen)">@Content</MudButton>
 
-<MudPopover Open="IsOpen" AnchorOrigin="Origin.CenterCenter" >
-    <MudText>Something here</MudText>
+    <MudPopover Open="IsOpen" AnchorOrigin="Origin.CenterCenter" RelativeWidth="true" Class="popover pa-2 my-2">
+    <MudText Class="d-inline">Pick Your Emoji:</MudText>
+        <MudIconButton Class="d-inline" Icon="@Icons.Material.Filled.Close" OnClick="@(()=>IsOpen = false)"></MudIconButton>
+        <MudPaper Class="overflow-scroll grid pa-2 my-2">
+            <MudStack>
+
+<MudGrid Class="menu">
+     @for (int i = 0; i < ListOfEmojis.Count; i++)
+            {
+                int localindex = i;
+                    var content = ListOfEmojis[localindex].First();
+                    <button onclick="@(()=>UpdateIndex(localindex) )" class="button" >
+                        @(
+                    content
+                    )</button>
+                }
+</MudGrid>
+<MudDivider/>
+        <MudGrid >
+                @for (int i = 0; i < ListOfEmojis[selectedTab].Count; i++)
+            {
+                int localindex = i;
+                    var content = ListOfEmojis[selectedTab][localindex];
+                    <button onclick="@(()=>EmojiSelected.InvokeAsync(content))" class="button">
+                        @(
+                    content
+                    )</button>
+                }
+    </MudGrid>
+            </MudStack>
+
+    </MudPaper>
+
     </MudPopover>
 
 </MudPaper>
+
 
 <style>
     .center-screen {
@@ -15,6 +48,23 @@
         position: absolute;
         top: 0;
         left: 0;
+    }
+    menu{
+        height:20px;
+    
+    }
+
+    button {
+        width:25px;
+        background-color: transparent;
+        color: #333;
+    }
+
+    .grid{
+        height:80%
+    }
+    .popover{
+        height:40%
     }
 </style>
 
@@ -32,8 +82,25 @@
 
     [Parameter] public bool IsOpen { get; set; } = false;
 
+    [Parameter] public EventCallback<string> EmojiSelected { get; set; }
 
-    
+    private List<List<string>> ListOfEmojis;
+    private int selectedTab { get; set; } = 0;
+
+    public EmojiPicker()
+    {
+        ListOfEmojis = EmojiList.EmojiesPerTab;
+    }
+    private void OnEmojiSelected(string emoji)
+    {
+
+
+    }
+
+    private void UpdateIndex(int i)
+    {
+        selectedTab = i;
+    }
 
 
 }

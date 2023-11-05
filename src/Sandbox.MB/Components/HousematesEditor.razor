@@ -1,13 +1,15 @@
 ﻿
-<MudOverlay Class="center-screen" IsHidden="true">
-    <MudPaper   Class="rounded mud-background-gray px-4 py-5 ma-7 object-center " Elevation="100">
-        <MudTextField @bind-Value="SelectedHousemate.Name" Label="Name" Variant="Variant.Text"></MudTextField>
-        <MudDatePicker Label="DOB" @bind-Date="_date" />
-        <EmojiPicker></EmojiPicker>
+
+ <MudPaper   Class="rounded mud-background-gray px-4 py-5 ma-7 object-center " Elevation="100">
+        <MudTextField @bind-Value="@SelectedHousemate.Name" Label="Name" Variant="Variant.Text"></MudTextField>
+        <MudDatePicker Label="DOB" @bind-Date="@SelectedHousemate.DOB" />
+    <EmojiPicker Content="@SelectedHousemate.Emoji" EmojiSelected="OnEmojiSelected"></EmojiPicker>
         <MudButton OnClick="@SaveEdit" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Save</MudButton>
-        <MudButton OnClick="@(()=>IsOpen =false)" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
+    <MudButton OnClick="@CloseRequested" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
     </MudPaper>
-</MudOverlay>
+
+
+
 
 <style>
     .center-screen {
@@ -24,20 +26,33 @@
 </style>
 
 @code {
-    [Parameter] public bool IsOpen { get; set; } = false;
-    [Parameter] public Housemate? SelectedHousemate {get;set;}
+    [Parameter] public EventCallback<MouseEventArgs> SaveRequested { get; set; }
 
-    private DateTime? _date;
-    private string _name ="";
-    private string _emoji = "";
+    [Parameter] public EventCallback<MouseEventArgs> CloseRequested { get; set; }
+
+    private Housemate? _selectedHousemate;
+
+    [Parameter]
+    public Housemate? SelectedHousemate
+    {
+        get { return _selectedHousemate; }
+        set {_selectedHousemate = value;}
+    }
+
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
     }
 
-    public void SaveEdit()
+    private void OnEmojiSelected(string emoji)
     {
-        
+        SelectedHousemate.Emoji = emoji;
     }
+
+    private async void SaveEdit()
+    {
+        await SaveRequested.InvokeAsync();
+    }
+
 }
