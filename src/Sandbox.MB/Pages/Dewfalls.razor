@@ -9,8 +9,8 @@
 @inject ISnackbar _snackbar;
 @inject IDatabase _database;
 <PageTitle>Dewfalls</PageTitle>
-
-<MudContainer Class="mx-auto">
+<div class="container">
+<MudContainer Class="mx-auto align-center">
     <ChildContent>
         <MudText Typo="Typo.h6" Align="Align.Center">This week it's:</MudText>
         <MudText Typo="Typo.h3" Align="Align.Center">@Turn.Name</MudText>
@@ -23,15 +23,17 @@
     <MudIconButton Class="d-inline" Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="CanEdit"></MudIconButton>
     <MudDropContainer T="Housemate" Items="Housemates" ItemsSelector="@((item, dropzone) => true)" ItemDropped="ItemDropped" MinWidth="MinWidth.Small">
     <ChildContent>   
-            <MudDropZone T="Housemate" Identifier="1" AllowReorder="IsEditable" Class="rounded mud-background-gray px-4 py-1 ma-7">
+            <MudDropZone T="Housemate" Identifier="1" AllowReorder="IsEditable" Class="rounded mud-background-gray px-4 py-1 ma-7 container">
                 <MudText Typo="Typo.h6" Class="mb-4">Rota</MudText>
             </MudDropZone>
     </ChildContent>
     <ItemRenderer>
-            <HousmateViewer Item="context" 
-                Turn="@Turn" 
-                IsEditable="@IsEditable" 
-                EditItemClicked="@(() => Selected(context))" />
+        <MudItem>
+                <HousmateViewer Item="context"
+                                Turn="@Turn"
+                                IsEditable="@IsEditable"
+                                EditItemClicked="@(() => Selected(context))" />
+        </MudItem>
     </ItemRenderer>
 </MudDropContainer>
 </MudContainer>
@@ -41,6 +43,7 @@
                       CloseRequested="@(() => IsOpen = false)"
                       SaveRequested="SaveEdit" />
 </MudOverlay>
+</div>
 
 
 
@@ -51,19 +54,19 @@
     .touch{
         touch-action:none;
     }
+
+    .container{
+        max-width:350px;
+        align-self:center;
+    }
 </style>
 @code {
     public List<Housemate> Housemates = new();
     public Housemate SelectedHousemate { get; set; } = new(1, "default", DateTime.Now, "", -1);
-    private DateTime? date { get; set; }
-    private string emoji ="";
 
     public Housemate Turn = new(1, "default", DateTime.Now, "",-1);
     public string Bins { get { return BinRoaterCalculator.GetWhichBins(false); } }
     public int Offset = 2;
-
-    public DateTime MinDate { get; set; } = new DateTime(1980, 01, 01);
-    public DateTime MaxDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 27);
 
     public bool IsBusy { get; set; } = true;
     public bool IsEditable { get; set; } = false;
@@ -103,33 +106,19 @@
     {
         housemate.Emoji = housemate.Emoji.ToImage();
         SelectedHousemate = housemate;
-
-        date = SelectedHousemate.DOB;
-        emoji = SelectedHousemate.Emoji;
         IsOpen = true;
     }
 
     private void SaveEdit()
     {
-        Console.Clear();
-        if (date is not null)
-        {
-            //SelectedHousemate.DOB = date;
-            Console.WriteLine(((DateTime)date).ToString("dd-MMM-yyyy"));
-        }
         SelectedHousemate.Emoji = SelectedHousemate.Emoji.ToShort();
-        Console.WriteLine(emoji);
-        //        Housemates.Where(x => x.ID == SelectedHousemate.ID).Select(x => SelectedHousemate);
-
         for (int i = 0; i < Housemates.Count; i++)
         {
             if (Housemates[i].ID == SelectedHousemate.ID)
             {
                 Housemates[i] = SelectedHousemate;    
-
             }
         }        
-
 
         _database.Save(Housemates);
         _snackbar.Add($"{SelectedHousemate.Name} was updated at: {DateTime.Now.ToString("hh:mm:ss tt")}", Severity.Success);

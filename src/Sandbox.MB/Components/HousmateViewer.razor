@@ -2,7 +2,7 @@
 
 @inherits ComponentBase
 
-<MudPaper Elevation="25" Class="pa-2 my-2 wrapper" MaxWidth="280px" draggable="true">
+<MudPaper Elevation="25" Class="pa-2 my-2 wrapper" MaxWidth="280px" draggable="true" MaxHeight="80px">
 
         <MudText Typo="Typo.body2" Class="turn">Turn: @("\n"+Item.IdToTurnDate(Turn).ToString("dd-MMM"))</MudText>
         <MudText Class="name">@Item.Name</MudText>
@@ -16,7 +16,7 @@
 <style>
     .wrapper 
     {
-        position:sticky;
+       position:sticky;
         display: grid;
         grid-template-columns: repeat(5, 1fr);
     }
@@ -29,7 +29,7 @@
 
         .name {
             grid-column: 2;
-            width: 80px;
+            width: 60px;
             vertical-align: central;
             text-align:center;
             height:50px;
@@ -47,7 +47,7 @@
 
         .emoji {
             grid-column: 4;
-            width: 5px;
+            width: 20px;
             vertical-align: central;
             text-align: center;
             height: 50px;
@@ -56,7 +56,7 @@
 
         .editbutton {
             grid-column: 5;
-            width: 5px;
+            width: 20px;
             vertical-align: central;
         }
 
