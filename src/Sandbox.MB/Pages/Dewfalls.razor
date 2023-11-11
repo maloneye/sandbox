@@ -10,7 +10,7 @@
 @inject IDatabase _database;
 <PageTitle>Dewfalls</PageTitle>
 <div class="container">
-<MudContainer Class="mx-auto align-center">
+    <MudContainer Class="align-center offset">
     <ChildContent>
         <MudText Typo="Typo.h6" Align="Align.Center">This week it's:</MudText>
         <MudText Typo="Typo.h3" Align="Align.Center">@Turn.Name</MudText>
@@ -18,13 +18,12 @@
     </ChildContent>
 </MudContainer>
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="align-center justify-center">
-    <MudText Align="Align.Right" Class="d-inline">Edit:</MudText>
-    <MudIconButton Class="d-inline" Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="CanEdit"></MudIconButton>
-    <MudDropContainer T="Housemate" Items="Housemates" ItemsSelector="@((item, dropzone) => true)" ItemDropped="ItemDropped" MinWidth="MinWidth.Small">
+    <MudContainer Class="align-center justify-center container">
+    <MudDropContainer T="Housemate" Items="Housemates" ItemsSelector="@((item, dropzone) => true)" ItemDropped="ItemDropped">
     <ChildContent>   
             <MudDropZone T="Housemate" Identifier="1" AllowReorder="IsEditable" Class="rounded mud-background-gray px-4 py-1 ma-7 container">
-                <MudText Typo="Typo.h6" Class="mb-4">Rota</MudText>
+                 <MudIconButton Class="d-inline" Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="CanEdit"></MudIconButton>
+                    <MudText Typo="Typo.h6" Class="mb-4 d-inline">Rota</MudText>
             </MudDropZone>
     </ChildContent>
     <ItemRenderer>
@@ -43,21 +42,24 @@
                       CloseRequested="@(() => IsOpen = false)"
                       SaveRequested="SaveEdit" />
 </MudOverlay>
+    <MudOverlay Visible="IsBusy" DarkBackground="true" Absolute="false">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
 </div>
-
-
-
-@*            <MudOverlay Visible="IsBusy" DarkBackground="true" Absolute="true">
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-            </MudOverlay>*@
+          
 <style>
+    .offset{
+        padding-left:80px;
+    }
+
     .touch{
         touch-action:none;
     }
 
-    .container{
-        max-width:350px;
-        align-self:center;
+    .container {
+        min-width:270px;
+        max-width:300px;
+        align-content:center;
     }
 </style>
 @code {
